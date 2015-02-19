@@ -1,4 +1,8 @@
 # MaskedWordCloud
 
+	Creates a masked word cloud.
+
 ## Requieres 
-[word_count](https://github.com/amueller/word_cloud)
+<ul>
+	<li>>[word_count](https://github.com/amueller/word_cloud)</li>
+</ul>
