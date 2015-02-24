@@ -1,12 +1,12 @@
 # MaskedWordCloud
 
-	Creates a masked word cloud.
+	Creates a word cloud masked over an image. Will be converted to a twitter bot.
 
-## Requieres 
+## Requires 
 <ul>
-	<li>[word_count](https://github.com/amueller/word_cloud)</li>
-	<li>[PIL](#)</li>
-	<li>[SciPy](#)</li>
-	<li>[NumPy](#)</li>
-	<li>[Skimage](#)</li>
+	<li><a href="https://github.com/amueller/word_cloud">word_count</a></li>
+	<li><a href="http://www.pythonware.com/products/pil">PIL</a></li>
+	<li><a href="http://www.scipy.org">SciPy</a></li>
+	<li><a href="http://www.numpy.org">NumPy</a></li>
+	<li><a href="http://scikit-image.org">Skimage</a></li>
 </ul>

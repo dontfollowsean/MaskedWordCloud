@@ -8,7 +8,7 @@ Using a mask you can generate wordclouds in arbitrary shapes.
 from os import path
 from scipy.misc import imread
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+#import matplotlib.cm as cm
 
 from wordcloud import WordCloud, STOPWORDS
 from PIL import Image
@@ -56,8 +56,8 @@ wc.generate(text)
 
 # store to file
 #wc.to_file(path.join(d, "alice.png"))
-wc.to_file(path.join(d, "images/output/output.jpg"))
-wcimg = toimage(imread(path.join(d,"images/output.jpg")))
+wc.to_file(path.join(d, "images/output/wordcloud.jpg"))
+wcimg = toimage(imread(path.join(d,"images/output/wordcloud.jpg")))
 
 edimage = edimage.convert("RGB")
 edimage.mode ="RGB"
@@ -65,9 +65,9 @@ print(edimage.mode)
 print(wcimg.mode)
 
 print(type(edimage))
-print(type(imread(path.join(d,"images/output/output.jpg"))))
+print(type(imread(path.join(d,"images/output/wordcloud.jpg"))))
 out = Image.blend(wcimg,edimage,0.2)
-
+out.save('images/output/maskedwc.jpg')
 
 # show
 plt.imshow(out)
