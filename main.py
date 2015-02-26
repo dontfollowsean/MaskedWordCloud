@@ -18,6 +18,17 @@ from wordcloud import WordCloud
 from settings import Settings
 from twitterapi import TwitterApi
 
+from PIL import Image
+from scipy.misc import toimage
+from scipy.misc import imread
+from skimage import filter
+
+from io import BytesIO
+
+
+
+
+
 
 class TwitterWordCloudBot:
     def __init__(self, twitter_api, imgur_client, stopwords, settings):
@@ -32,6 +43,9 @@ class TwitterWordCloudBot:
         # hashtags to which this bot respond
         self.WORDCLOUD_HASHTAGS = settings.read_wordcloud_hashtags()
 
+        # hashtags to which this bot respond with a masked cloud
+        self.MASKEDCLOUD_HASHTAGS = settings.read_maskedwordcloud_hashtags()
+
         # max number of words displayed in the image
         self.MAX_WORDS = settings.read_max_words()
 
@@ -45,7 +59,7 @@ class TwitterWordCloudBot:
         self.WIDTH = settings.read_width()
         self.HEIGHT = settings.read_height()
 
-    def make_wordcloud(self, twitter_user):
+    def make_wordcloud(self, twitter_user, maskedcloud):
         """ Build the word cloud png image of a twitter user
         :param twitter_user: name of the twitter account (string)
         :return: path to the word cloud image (string),
@@ -60,14 +74,35 @@ class TwitterWordCloudBot:
         words = self.clean_tweets(tweets)
         if words == []:
             return None
-        try:
-            wordcloud = WordCloud(width=self.WIDTH, height=self.HEIGHT, max_words=self.MAX_WORDS) \
-                .generate(' '.join(words))
-        except:
-            return None
-        ts = str(int(time.time()))
-        img_file = os.path.join(self.OUTPUT_DIR, ts + twitter_user + ".png")
-        wordcloud.to_file(img_file)
+        if maskedcloud:
+
+            aviresponse = self.twitter_api.get_profile_image(screen_name=twitter_user)
+            avi = Image.open(BytesIO(aviresponse.content))
+            self.create_bw_image(avi)
+            edgeimg = self.get_edges()
+            mask = self.get_mask()
+            try:
+                wordcloud = WordCloud( max_words=self.MAX_WORDS, mask=mask) \
+                    .generate(' '.join(words))
+            except:
+                return None
+
+            wordcloud.to_file(os.path.join(self.OUTPUT_DIR,"temp/tempcloud.png"))
+            wcimg = toimage(imread(os.path.join(self.OUTPUT_DIR,"temp/tempcloud.png")))
+            out = Image.blend(wcimg,edgeimg,0.15)
+
+            ts = str(int(time.time()))
+            img_file = os.path.join(self.OUTPUT_DIR, ts + twitter_user + "Avi.png")
+            out.save(img_file)
+        else:
+            try:
+                wordcloud = WordCloud(width=self.WIDTH, height=self.HEIGHT, max_words=self.MAX_WORDS) \
+                    .generate(' '.join(words))
+            except:
+                return None
+            ts = str(int(time.time()))
+            img_file = os.path.join(self.OUTPUT_DIR, ts + twitter_user + ".png")
+            wordcloud.to_file(img_file)
         return img_file
 
     @staticmethod
@@ -136,7 +171,7 @@ class TwitterWordCloudBot:
         if mentions:
             print("I'm going to handle {0} mention(s).".format(len(mentions)))
         else:
-            print("No mentions :(")
+            print("No mentions ")
 
         while mentions:
             mention = mentions.pop()
@@ -185,7 +220,15 @@ class TwitterWordCloudBot:
                     # status += random.choice(rand_suff)
                     # uncomment the following line if you get blocked by Twitter because your replies are automated
                     # status += ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ' '
-                img_file = self.make_wordcloud(user_name)
+
+                if self._contains_hashtag(mention, self.MASKEDCLOUD_HASHTAGS):
+                    usemask = True
+                else:
+                    usemask = False
+
+                img_file = self.make_wordcloud(user_name,usemask)
+
+
                 if img_file is None:
                     print("Error: failed building the word cloud\n")
                     self.save_mentions(mentions)
@@ -361,6 +404,31 @@ class TwitterWordCloudBot:
                     return None
 
                 time.sleep(sleep_seconds)
+
+    def create_bw_image(self, image_file):
+        """ Create bw image for mask and saves image
+        :param image_file: avi image
+        :return:
+        """
+        image_file = image_file.convert("L") # convert image to black and white
+        image_file.mode = "L"
+        image_file = image_file.point(lambda x: 0 if x>128 else 255)
+        print("Saving BW Image")
+        image_file.save(os.path.join(self.OUTPUT_DIR,"temp/bw.png"))
+
+    def get_edges(self):
+        """ Find edges of BW image
+
+        :return: image of edges
+        """
+        edges = filter.canny(imread(os.path.join(self.OUTPUT_DIR,"temp/bw.png")), sigma=3)
+        return toimage(edges).convert("RGB")
+
+    def get_mask(self):
+        """ Get mask for wordcloud
+        :return:
+        """
+        return imread(os.path.join(self.OUTPUT_DIR,"temp/bw.png"))
 
 
 if __name__ == "__main__":
