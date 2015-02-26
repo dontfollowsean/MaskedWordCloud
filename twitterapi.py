@@ -3,6 +3,8 @@ import time
 from urllib.error import URLError
 import twitter
 import os
+import requests
+
 
 
 class TwitterApi():
@@ -166,3 +168,29 @@ class TwitterApi():
             'in_reply_to_status_id': in_reply_to_status_id,
             }
         return self.make_twitter_request(self.twitter_api.statuses.update, **kw)
+
+
+    def get_banner_image(self, screen_name=None, user_id=None):
+        kw={}
+        if screen_name:
+            kw['screen_name'] = screen_name
+        else:
+            kw['user_id'] = user_id
+
+        image_url = self.make_twitter_request(self.twitter_api.users.show, **kw)
+        print(image_url)
+
+    def get_profile_image(self, screen_name=None, user_id=None):
+        kw={}
+        if screen_name:
+            kw['screen_name'] = screen_name
+        else:
+            kw['user_id'] = user_id
+
+        user = self.make_twitter_request(self.twitter_api.users.show, **kw)
+        image_url = user['profile_image_url']
+        image_url = image_url.replace("_normal","")
+        print(image_url)
+        response = requests.get(image_url)
+
+        return response

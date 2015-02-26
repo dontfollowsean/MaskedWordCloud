@@ -70,6 +70,9 @@ class Settings(object):
     def read_wordcloud_hashtags(self):
         return self.config[self.CONFIGS]['wordcloudhashtag'].split(',')
 
+    def read_maskedwordcloud_hashtags(self):
+        return self.config[self.CONFIGS]['maskedwordcloudhashtag'].split(',')
+
     def read_max_words(self):
         return int(self.config[self.CONFIGS]['maxwords'])
 
