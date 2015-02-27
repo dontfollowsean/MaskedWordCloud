@@ -19,3 +19,4 @@ tweepy==3.3.0
 twitter==1.16.0
 TwitterAPI==2.3.1
 wordcloud==1.0.0
+html==1.16.0
