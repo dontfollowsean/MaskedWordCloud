@@ -46,6 +46,9 @@ class TwitterWordCloudBot:
         # hashtags to which this bot respond with a masked cloud
         self.MASKEDCLOUD_HASHTAGS = settings.read_maskedwordcloud_hashtags()
 
+        # font_path
+        self.FONT_PATH = settings.read_font_path()
+
         # max number of words displayed in the image
         self.MAX_WORDS = settings.read_max_words()
 
@@ -82,7 +85,7 @@ class TwitterWordCloudBot:
             edgeimg = self.get_edges()
             mask = self.get_mask()
             try:
-                wordcloud = WordCloud( max_words=self.MAX_WORDS, mask=mask) \
+                wordcloud = WordCloud(font_path=self.FONT_PATH, max_words=self.MAX_WORDS, mask=mask) \
                     .generate(' '.join(words))
             except:
                 return None
@@ -96,7 +99,7 @@ class TwitterWordCloudBot:
             out.save(img_file)
         else:
             try:
-                wordcloud = WordCloud(width=self.WIDTH, height=self.HEIGHT, max_words=self.MAX_WORDS) \
+                wordcloud = WordCloud(font_path=self.FONT_PATH, width=self.WIDTH, height=self.HEIGHT, max_words=self.MAX_WORDS) \
                     .generate(' '.join(words))
             except:
                 return None
@@ -361,6 +364,14 @@ class TwitterWordCloudBot:
         """
         while True:
             self.handle_mentions()
+
+            #remove uploaded pictures before sleeping
+
+            filelist = [ f for f in os.listdir(self.OUTPUT_DIR) if f.endswith(".png") ]
+            for f in filelist:
+                print("Removing "+ os.path.join(self.OUTPUT_DIR,f))
+                os.remove(os.path.join(self.OUTPUT_DIR,f))
+
             print("I'm going to sleep for {0} seconds\n".format(sleep_seconds))
             time.sleep(sleep_seconds)
 
@@ -413,7 +424,7 @@ class TwitterWordCloudBot:
         image_file = image_file.convert("L") # convert image to black and white
         image_file.mode = "L"
         image_file = image_file.point(lambda x: 0 if x>128 else 255)
-        print("Saving BW Image")
+        print("Saving BW Image for mask")
         image_file.save(os.path.join(self.OUTPUT_DIR,"temp/bw.png"))
 
     def get_edges(self):

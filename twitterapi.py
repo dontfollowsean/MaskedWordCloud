@@ -190,7 +190,7 @@ class TwitterApi():
         user = self.make_twitter_request(self.twitter_api.users.show, **kw)
         image_url = user['profile_image_url']
         image_url = image_url.replace("_normal","")
-        print(image_url)
+        print("Avi url: "+image_url)
         response = requests.get(image_url)
 
         return response

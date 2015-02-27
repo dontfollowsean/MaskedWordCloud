@@ -73,6 +73,9 @@ class Settings(object):
     def read_maskedwordcloud_hashtags(self):
         return self.config[self.CONFIGS]['maskedwordcloudhashtag'].split(',')
 
+    def read_font_path(self):
+        return self.config[self.CONFIGS]['font_path']
+
     def read_max_words(self):
         return int(self.config[self.CONFIGS]['maxwords'])
 
