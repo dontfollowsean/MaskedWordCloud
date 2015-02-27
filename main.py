@@ -215,11 +215,7 @@ class TwitterWordCloudBot:
                 else:
                     user_name = screen_name
                     status += 'here\'s your word cloud '
-                    rand_suff = [' :D ', '! ', ' ^^ ', ' :P ', ' .(ಠ⌣ಠ). ', ' ＼(＠O＠)／ ',
-                                 ' ＼( ｀.∀´)／ ', ' ;) ', ' voilà ', ' ah! ', ' :^) ', ' :o) ', ' :3 ',
-                                 ' =] ', ' 8) ', ' B^D ', ' =3 ', ' ;^) ', ' (^o^)丿 ', ' ^ω^ ',
-                                 ' ＼(^o^)／ ', ' ＼(◎o◎)／ ', ' （⌒▽⌒） ', ' ( ﾟヮﾟ) ', ' ( ͡° ͜ʖ ͡°) ',
-                                 ' (☞ﾟヮﾟ)☞ ']
+
                     # status += random.choice(rand_suff)
                     # uncomment the following line if you get blocked by Twitter because your replies are automated
                     # status += ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + ' '
