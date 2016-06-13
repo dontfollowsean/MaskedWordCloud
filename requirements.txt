@@ -16,5 +16,5 @@ tweepy==3.3.0
 twitter==1.16.0
 TwitterAPI==2.3.1
 git+git://github.com/amueller/word_cloud.git
-scikit-image==0.10.1
 scipy==0.15.1
+scikit-image==0.10.1

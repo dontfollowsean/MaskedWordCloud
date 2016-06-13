@@ -1,3 +1,8 @@
-images
-*.pyc
 html/__pycache__
+settings.ini
+images
+mentions
+twitter_oauth
+output
+*.pyc
+.idea/
